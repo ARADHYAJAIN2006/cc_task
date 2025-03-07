@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ROWS 28
+#define COLS 28
+
+void loadCSV(const char *filename, int image[ROWS][COLS]) {
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        printf("Error: File not found!\n");
+        return;
+    }
+
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            fscanf(file, "%d,", &image[i][j]);  // Read grayscale pixel values
+        }
+    }
+    fclose(file);
+}
+
+void printImage(int image[ROWS][COLS]) {
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            printf("%3d ", image[i][j]);  // Print pixel values
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    int image[ROWS][COLS];
+    
+    // Load CSV containing grayscale pixel values
+    loadCSV("sample_image.csv", image);
+
+    // Print image as numbers
+    printf("Loaded Image Data:\n");
+    printImage(image);
+
+    return 0;
+}
