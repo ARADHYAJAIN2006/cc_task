@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+typedef struct {
+    int key;
+    int value;
+    time_t expiry;
+} CacheEntry;
+
+CacheEntry cache[100];
+int size = 0;
+
+void removeExpired() {
+    time_t now = time(NULL);
+    for (int i = 0; i < size; i++) {
+        if (cache[i].expiry < now) {
+            cache[i] = cache[size - 1];
+            size--;
+            i--;
+        }
+    }
+}
+
+void set(int key, int value, int expiryTime) {
+    removeExpired();
+    cache[size].key = key;
+    cache[size].value = value;
+    cache[size].expiry = time(NULL) + expiryTime;
+    size++;
+}
+
+int get(int key) {
+    removeExpired();
+    for (int i = 0; i < size; i++) {
+        if (cache[i].key == key)
+            return cache[i].value;
+    }
+    return -1;
+}
+
+int main() {
+    set(1, 100, 5);
+    sleep(3);
+    printf("Value of key 1: %d\n", get(1));
+    sleep(3);
+    printf("Value of key 1 after expiry: %d\n", get(1));
+
+    return 0;
+}
