@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int start;
+    int end;
+} Interval;
+
+Interval intervals[100];
+int count = 0;
+
+int compare(const void* a, const void* b) {
+    return ((Interval*)a)->start - ((Interval*)b)->start;
+}
+
+void addInterval(int start, int end) {
+    intervals[count].start = start;
+    intervals[count].end = end;
+    count++;
+
+    qsort(intervals, count, sizeof(Interval), compare);
+
+    int idx = 0;
+    for (int i = 1; i < count; i++) {
+        if (intervals[idx].end >= intervals[i].start) {
+            intervals[idx].end = (intervals[idx].end > intervals[i].end) ? intervals[idx].end : intervals[i].end;
+        } else {
+            idx++;
+            intervals[idx] = intervals[i];
+        }
+    }
+    count = idx + 1;
+}
+
+void getIntervals() {
+    for (int i = 0; i < count; i++)
+        printf("[%d, %d] ", intervals[i].start, intervals[i].end);
+    printf("\n");
+}
+
+int main() {
+    addInterval(1, 5);
+    addInterval(6, 8);
+    addInterval(4, 7);
+    
+    printf("Merged Intervals: ");
+    getIntervals();
+
+    return 0;
+}
